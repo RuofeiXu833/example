@@ -1,0 +1,2301 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataMed Analytics Tutor - 心理学R语言智能分析平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Crimson+Text:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['Crimson Text', 'serif'],
+                        'sans': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        'slate': {
+                            25: '#FDFDFE',
+                            950: '#0A0A0B',
+                        },
+                        'r-blue': {
+                            50: '#F0F7FF',
+                            100: '#E6F2FF',
+                            200: '#BAD5F5',
+                            300: '#8FB8EA',
+                            400: '#649BDF',
+                            500: '#3A7DD4',
+                            600: '#2E64A9',
+                            700: '#234C7E',
+                            800: '#173454',
+                            900: '#0C1C29',
+                        },
+                        'warm-gray': {
+                            50: '#FAFAF9',
+                            100: '#F5F5F4',
+                            200: '#E7E5E4',
+                            300: '#D6D3D1',
+                            400: '#A8A29E',
+                            500: '#78716C',
+                            600: '#57534E',
+                            700: '#44403C',
+                            800: '#292524',
+                            900: '#1C1917',
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark .glass-morphism {
+            background: rgba(30, 30, 30, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .elegant-shadow {
+            box-shadow: 
+                0 1px 3px 0 rgba(0, 0, 0, 0.1),
+                0 1px 2px 0 rgba(0, 0, 0, 0.06),
+                0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .elegant-shadow-lg {
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .r-gradient {
+            background: linear-gradient(135deg, #3A7DD4 0%, #2E64A9 100%);
+        }
+        
+        .r-gradient-soft {
+            background: linear-gradient(135deg, 
+                rgba(58, 125, 212, 0.1) 0%, 
+                rgba(46, 100, 169, 0.05) 100%);
+        }
+        
+        .math-bg {
+            background-image: 
+                radial-gradient(circle at 15% 85%, rgba(58, 125, 212, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 85% 15%, rgba(58, 125, 212, 0.02) 0%, transparent 50%);
+        }
+        
+        .formula-overlay {
+            font-family: 'Times New Roman', serif;
+            opacity: 0.03;
+            font-size: 1.1rem;
+            position: absolute;
+            user-select: none;
+            pointer-events: none;
+            color: #3A7DD4;
+        }
+        
+        .code-window {
+            background: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .code-window::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f56;
+            box-shadow: 
+                20px 0 0 #ffbd2e,
+                40px 0 0 #27ca3f;
+        }
+        
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 10px 25px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .premium-button {
+            background: linear-gradient(135deg, #3A7DD4 0%, #2E64A9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .premium-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.6s;
+        }
+        
+        .premium-button:hover::before {
+            left: 100%;
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #3A7DD4 0%, #2E64A9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .counter {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Premium Card Styles */
+        .premium-card-container {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .premium-card-container:hover {
+            transform: translateY(-12px) scale(1.02);
+        }
+        
+        .premium-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+        
+        .premium-card:hover {
+            box-shadow: 
+                0 20px 40px -10px rgba(0, 0, 0, 0.15),
+                0 8px 16px -4px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Floating particle animation */
+        @keyframes floatingParticle {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px);
+                opacity: 0.4;
+            }
+            25% { 
+                transform: translateY(-4px) translateX(2px);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translateY(-8px) translateX(-1px);
+                opacity: 0.6;
+            }
+            75% { 
+                transform: translateY(-2px) translateX(-3px);
+                opacity: 0.9;
+            }
+        }
+        
+        .floating-particle {
+            animation: floatingParticle 3s ease-in-out infinite;
+        }
+        
+        /* Icon container hover effects */
+        .premium-card .w-24 {
+            transition: all 0.3s ease;
+        }
+        
+        .premium-card:hover .w-24 {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 
+                0 15px 30px rgba(0, 0, 0, 0.2),
+                0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Text gradient hover effects */
+        .premium-card h3 {
+            transition: all 0.3s ease;
+        }
+        
+        .premium-card:hover h3 {
+            transform: translateY(-2px);
+        }
+        
+        /* Demo section hover effects */
+        .premium-card .bg-white\/80 {
+            transition: all 0.3s ease;
+        }
+        
+        .premium-card:hover .bg-white\/80 {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Stats grid hover effects */
+        .premium-card .grid.grid-cols-3 > div {
+            transition: all 0.3s ease;
+        }
+        
+        .premium-card:hover .grid.grid-cols-3 > div {
+            transform: translateY(-2px);
+        }
+        
+        /* Background pattern animation */
+        @keyframes backgroundShift {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0.05;
+            }
+            50% { 
+                transform: translate(10px, -10px) scale(1.1);
+                opacity: 0.08;
+            }
+        }
+        
+        .premium-card .absolute.w-32,
+        .premium-card .absolute.w-24 {
+            animation: backgroundShift 8s ease-in-out infinite;
+        }
+        
+        .premium-card .absolute.w-24 {
+            animation-delay: 2s;
+        }
+        
+        /* Progressive enhancement for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .premium-card-container,
+            .premium-card,
+            .floating-particle,
+            .premium-card .w-24,
+            .premium-card h3,
+            .premium-card .bg-white\/80,
+            .premium-card .grid.grid-cols-3 > div {
+                transition: none;
+                animation: none;
+                transform: none;
+            }
+            
+            .premium-card-container:hover,
+            .premium-card:hover,
+            .premium-card:hover .w-24,
+            .premium-card:hover h3,
+            .premium-card:hover .bg-white\/80,
+            .premium-card:hover .grid.grid-cols-3 > div {
+                transform: none;
+            }
+        }
+        
+        /* Workflow Step Styles */
+        .workflow-step-container {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .workflow-step-container:hover {
+            transform: translateY(-16px) scale(1.03);
+        }
+        
+        .workflow-step {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+        
+        .workflow-step:hover {
+            box-shadow: 
+                0 25px 50px -10px rgba(0, 0, 0, 0.2),
+                0 10px 20px -5px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Workflow particle animation */
+        @keyframes workflowParticle {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: scale(1.5);
+                opacity: 1;
+            }
+        }
+        
+        .workflow-particle {
+            animation: workflowParticle 2s ease-in-out infinite;
+        }
+        
+        /* Step number hover effects */
+        .workflow-step .w-24 {
+            transition: all 0.4s ease;
+        }
+        
+        .workflow-step:hover .w-24 {
+            transform: scale(1.15) rotate(8deg);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.25),
+                0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Demo section hover effects */
+        .workflow-step .bg-white\/90 {
+            transition: all 0.4s ease;
+        }
+        
+        .workflow-step:hover .bg-white\/90 {
+            background: rgba(255, 255, 255, 0.98);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Background decoration animation */
+        @keyframes workflowBackgroundShift {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0.05;
+            }
+            50% { 
+                transform: translate(15px, -15px) scale(1.2);
+                opacity: 0.1;
+            }
+        }
+        
+        .workflow-step .absolute.w-24,
+        .workflow-step .absolute.w-16 {
+            animation: workflowBackgroundShift 10s ease-in-out infinite;
+        }
+        
+        .workflow-step .absolute.w-16 {
+            animation-delay: 3s;
+        }
+        
+        /* Enhanced step number styling */
+        .workflow-step h3 {
+            transition: all 0.3s ease;
+        }
+        
+        .workflow-step:hover h3 {
+            transform: translateY(-3px);
+        }
+        
+        /* Progress bar animation */
+        @keyframes progressFill {
+            0% { width: 0%; }
+            100% { width: 98.7%; }
+        }
+        
+        .workflow-step:hover .bg-gradient-to-r.from-emerald-500.to-green-500 {
+            animation: progressFill 1.5s ease-out;
+        }
+        
+        /* Enhanced connection line */
+        .workflow-step-container:nth-child(1):hover ~ * .hidden.lg\\:block .h-1 {
+            background: linear-gradient(to right, transparent, #60A5FA, #A78BFA, transparent);
+        }
+        
+        /* Code highlighting animation */
+        @keyframes codeHighlight {
+            0%, 100% { background-color: rgba(55, 65, 81, 1); }
+            50% { background-color: rgba(75, 85, 99, 1); }
+        }
+        
+        .workflow-step:hover .bg-gray-800 {
+            animation: codeHighlight 2s ease-in-out infinite;
+        }
+        
+        /* Stats animation */
+        .workflow-step .grid.grid-cols-3 > div {
+            transition: all 0.3s ease;
+        }
+        
+        .workflow-step:hover .grid.grid-cols-3 > div {
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        /* Progressive enhancement for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .workflow-step-container,
+            .workflow-step,
+            .workflow-particle,
+            .workflow-step .w-24,
+            .workflow-step h3,
+            .workflow-step .bg-white\/90,
+            .workflow-step .grid.grid-cols-3 > div {
+                transition: none;
+                animation: none;
+                transform: none;
+            }
+            
+            .workflow-step-container:hover,
+            .workflow-step:hover,
+            .workflow-step:hover .w-24,
+            .workflow-step:hover h3,
+            .workflow-step:hover .bg-white\/90,
+            .workflow-step:hover .grid.grid-cols-3 > div {
+                transform: none;
+            }
+        }
+        
+        /* Ecosystem Card Styles */
+        .ecosystem-card-container {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .ecosystem-card-container:hover {
+            transform: translateY(-20px) scale(1.02);
+        }
+        
+        .ecosystem-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(25px);
+        }
+        
+        .ecosystem-card:hover {
+            box-shadow: 
+                0 30px 60px -10px rgba(0, 0, 0, 0.2),
+                0 12px 25px -5px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Ecosystem floating animation */
+        @keyframes ecosystemFloat {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) scale(1);
+                opacity: 0.4;
+            }
+            25% { 
+                transform: translateY(-3px) translateX(1px) scale(1.1);
+                opacity: 0.7;
+            }
+            50% { 
+                transform: translateY(-6px) translateX(-1px) scale(1.2);
+                opacity: 0.9;
+            }
+            75% { 
+                transform: translateY(-2px) translateX(-2px) scale(1.05);
+                opacity: 0.6;
+            }
+        }
+        
+        .ecosystem-float {
+            animation: ecosystemFloat 4s ease-in-out infinite;
+        }
+        
+        /* Icon container hover effects for ecosystem cards */
+        .ecosystem-card .w-20,
+        .ecosystem-card .w-18,
+        .ecosystem-card .w-16 {
+            transition: all 0.4s ease;
+        }
+        
+        .ecosystem-card:hover .w-20,
+        .ecosystem-card:hover .w-18,
+        .ecosystem-card:hover .w-16 {
+            transform: scale(1.1);
+            box-shadow: 
+                0 20px 45px rgba(0, 0, 0, 0.25),
+                0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Package list hover effects */
+        .ecosystem-card .bg-white\/80 {
+            transition: all 0.3s ease;
+        }
+        
+        .ecosystem-card:hover .bg-white\/80 {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Stats grid hover effects for ecosystem */
+        .ecosystem-card .grid > div {
+            transition: all 0.3s ease;
+        }
+        
+        .ecosystem-card:hover .grid > div {
+            transform: translateY(-2px) scale(1.03);
+        }
+        
+        /* Hub node animation */
+        .hub-node {
+            transform-origin: center;
+        }
+        
+        /* Background decoration animation for ecosystem */
+        @keyframes ecosystemBackgroundShift {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0.05;
+            }
+            50% { 
+                transform: translate(20px, -20px) scale(1.3);
+                opacity: 0.1;
+            }
+        }
+        
+        .ecosystem-card .absolute.w-32,
+        .ecosystem-card .absolute.w-28,
+        .ecosystem-card .absolute.w-24,
+        .ecosystem-card .absolute.w-20,
+        .ecosystem-card .absolute.w-16 {
+            animation: ecosystemBackgroundShift 12s ease-in-out infinite;
+        }
+        
+        .ecosystem-card .absolute.w-24,
+        .ecosystem-card .absolute.w-20,
+        .ecosystem-card .absolute.w-16 {
+            animation-delay: 4s;
+        }
+        
+        /* Enhanced text gradient hover effects for ecosystem */
+        .ecosystem-card h3 {
+            transition: all 0.3s ease;
+        }
+        
+        .ecosystem-card:hover h3 {
+            transform: translateY(-3px);
+        }
+        
+        /* Method category animations */
+        .ecosystem-card .space-y-4 > div {
+            transition: all 0.3s ease;
+        }
+        
+        .ecosystem-card:hover .space-y-4 > div {
+            transform: translateX(5px);
+        }
+        
+        /* Progressive enhancement for reduced motion - ecosystem */
+        @media (prefers-reduced-motion: reduce) {
+            .ecosystem-card-container,
+            .ecosystem-card,
+            .ecosystem-float,
+            .ecosystem-card .w-20,
+            .ecosystem-card .w-18,
+            .ecosystem-card .w-16,
+            .ecosystem-card h3,
+            .ecosystem-card .bg-white\/80,
+            .ecosystem-card .grid > div,
+            .ecosystem-card .space-y-4 > div {
+                transition: none;
+                animation: none;
+                transform: none;
+            }
+            
+            .ecosystem-card-container:hover,
+            .ecosystem-card:hover,
+            .ecosystem-card:hover .w-20,
+            .ecosystem-card:hover .w-18,
+            .ecosystem-card:hover .w-16,
+            .ecosystem-card:hover h3,
+            .ecosystem-card:hover .bg-white\/80,
+            .ecosystem-card:hover .grid > div,
+            .ecosystem-card:hover .space-y-4 > div {
+                transform: none;
+            }
+        }
+        
+        /* Testimonial Card Styles */
+        .testimonial-card-container {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .testimonial-card-container:hover {
+            transform: translateY(-24px) scale(1.03);
+        }
+        
+        .testimonial-card {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(30px);
+        }
+        
+        .testimonial-card:hover {
+            box-shadow: 
+                0 40px 80px -15px rgba(0, 0, 0, 0.25),
+                0 15px 30px -8px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Testimonial floating animation */
+        @keyframes testimonialFloat {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% { 
+                transform: scale(1.3);
+                opacity: 0.8;
+            }
+        }
+        
+        .testimonial-float {
+            animation: testimonialFloat 3s ease-in-out infinite;
+        }
+        
+        /* Research floating icons */
+        @keyframes researchFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.4;
+            }
+            25% { 
+                transform: translateY(-10px) rotate(5deg);
+                opacity: 0.7;
+            }
+            50% { 
+                transform: translateY(-20px) rotate(-3deg);
+                opacity: 1;
+            }
+            75% { 
+                transform: translateY(-5px) rotate(2deg);
+                opacity: 0.8;
+            }
+        }
+        
+        .research-float {
+            animation: researchFloat 6s ease-in-out infinite;
+        }
+        
+        /* Enhanced researcher profile hover effects */
+        .testimonial-card .w-16 {
+            transition: all 0.4s ease;
+        }
+        
+        .testimonial-card:hover .w-16 {
+            transform: scale(1.15) rotate(8deg);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Quote animation on hover */
+        .testimonial-card blockquote {
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .testimonial-card:hover blockquote {
+            transform: translateY(-3px);
+        }
+        
+
+        
+        /* Stats grid animation for testimonials */
+        .testimonial-card .grid.grid-cols-2 > div {
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover .grid.grid-cols-2 > div {
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        /* Rating stars animation */
+        .testimonial-card .flex.space-x-1 > div {
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover .flex.space-x-1 > div {
+            transform: scale(1.1);
+        }
+        
+        .testimonial-card:hover .flex.space-x-1 > div:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .testimonial-card:hover .flex.space-x-1 > div:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .testimonial-card:hover .flex.space-x-1 > div:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        .testimonial-card:hover .flex.space-x-1 > div:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        
+        .testimonial-card:hover .flex.space-x-1 > div:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+        
+        /* Background decoration animation for testimonials */
+        @keyframes testimonialBackgroundShift {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0.05;
+            }
+            50% { 
+                transform: translate(25px, -25px) scale(1.4);
+                opacity: 0.12;
+            }
+        }
+        
+        .testimonial-card .absolute.w-28,
+        .testimonial-card .absolute.w-20 {
+            animation: testimonialBackgroundShift 15s ease-in-out infinite;
+        }
+        
+        .testimonial-card .absolute.w-20 {
+            animation-delay: 5s;
+        }
+        
+        /* Testimonial header enhancement */
+        .testimonial-card h3 {
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover h3 {
+            transform: translateY(-2px);
+        }
+        
+        /* Research details panel animation */
+        .testimonial-card .bg-white\/80.backdrop-blur-sm {
+            transition: all 0.4s ease;
+        }
+        
+        .testimonial-card:hover .bg-white\/80.backdrop-blur-sm {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Verified badge pulse */
+        @keyframes verifiedPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        
+        .testimonial-card svg.w-4.h-4 {
+            animation: verifiedPulse 2s ease-in-out infinite;
+        }
+        
+        /* Progressive enhancement for reduced motion - testimonials */
+        @media (prefers-reduced-motion: reduce) {
+            .testimonial-card-container,
+            .testimonial-card,
+            .testimonial-float,
+            .research-float,
+            .testimonial-card .w-16,
+            .testimonial-card blockquote,
+            .testimonial-card h3,
+            .testimonial-card .bg-white\/80,
+            .testimonial-card .grid > div,
+            .testimonial-card .flex.space-x-1 > div {
+                transition: none;
+                animation: none;
+                transform: none;
+            }
+            
+            .testimonial-card-container:hover,
+            .testimonial-card:hover,
+            .testimonial-card:hover .w-16,
+            .testimonial-card:hover blockquote,
+            .testimonial-card:hover h3,
+            .testimonial-card:hover .bg-white\/80,
+            .testimonial-card:hover .grid > div,
+            .testimonial-card:hover .flex.space-x-1 > div {
+                transform: none;
+            }
+        }
+        
+        /* Destiny CTA Section Styles */
+        @keyframes destinyFloat {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+                opacity: 0.15;
+            }
+            25% { 
+                transform: translateY(-20px) translateX(10px) rotate(8deg);
+                opacity: 0.25;
+            }
+            50% { 
+                transform: translateY(-40px) translateX(-5px) rotate(-3deg);
+                opacity: 0.35;
+            }
+            75% { 
+                transform: translateY(-15px) translateX(-12px) rotate(5deg);
+                opacity: 0.2;
+            }
+        }
+        
+        .destiny-float {
+            animation: destinyFloat 12s ease-in-out infinite;
+        }
+        
+        /* Epic title text effects */
+        @keyframes titleShimmer {
+            0% { 
+                background-position: -200% center;
+            }
+            100% { 
+                background-position: 200% center;
+            }
+        }
+        
+        .text-gradient {
+            background-size: 200% auto;
+            animation: titleShimmer 8s ease-in-out infinite;
+        }
+        
+        /* Glowing ring effects for the main button */
+        @keyframes glowPulse {
+            0%, 100% { 
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Epic button hover effects */
+        .group:hover .group-hover\\:translate-x-1 {
+            transform: translateX(4px);
+        }
+        
+        /* Legacy stats hover effects */
+        .group:hover .group-hover\\:scale-110 {
+            transform: scale(1.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Mathematical symbols depth layering */
+        .destiny-float:nth-child(1) { z-index: 1; }
+        .destiny-float:nth-child(2) { z-index: 2; }
+        .destiny-float:nth-child(3) { z-index: 3; }
+        .destiny-float:nth-child(4) { z-index: 1; }
+        
+        /* Epic timeline animation */
+        @keyframes timelineCount {
+            0% { 
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .counter[data-target="1993"],
+        .counter[data-target="2024"] {
+            animation: timelineCount 2s ease-out 1s both;
+        }
+        
+        .counter[data-target="2024"] {
+            animation-delay: 1.5s;
+        }
+        
+        /* Destiny quote styling */
+        blockquote {
+            position: relative;
+        }
+        
+        blockquote::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, transparent, #6366f1, transparent);
+            border-radius: 2px;
+        }
+        
+        /* Hero Title Floating Animation */
+        @keyframes heroTitleFloat {
+            0%, 100% { 
+                transform: translateY(0px);
+            }
+            50% { 
+                transform: translateY(-8px);
+            }
+        }
+        
+        .hero-title-float {
+            animation: heroTitleFloat 6s ease-in-out infinite;
+        }
+        
+        /* Individual Word Floating Effects */
+        .hero-word-1 {
+            animation: heroTitleFloat 6s ease-in-out infinite;
+            animation-delay: 0s;
+        }
+        
+        .hero-word-2 {
+            animation: heroTitleFloat 6s ease-in-out infinite;
+            animation-delay: 0.5s;
+        }
+        
+        .hero-word-3 {
+            animation: heroTitleFloat 6s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+        
+        .hero-word-4 {
+            animation: heroTitleFloat 6s ease-in-out infinite;
+            animation-delay: 1.5s;
+        }
+        
+        /* Progressive enhancement for reduced motion - destiny */
+        @media (prefers-reduced-motion: reduce) {
+            .destiny-float,
+            .text-gradient,
+            .counter[data-target="1993"],
+            .counter[data-target="2024"],
+            .hero-title-float,
+            .hero-word-1,
+            .hero-word-2,
+            .hero-word-3,
+            .hero-word-4 {
+                animation: none;
+                transform: none;
+            }
+            
+            .group:hover .group-hover\\:translate-x-1,
+            .group:hover .group-hover\\:scale-110 {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-academic-ink dark:text-gray-100 font-sans antialiased">
+    <!-- Clean Gradient Background -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/30 dark:from-slate-950 dark:via-blue-950/20 dark:to-indigo-950/30"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex flex-col px-6 lg:px-8 overflow-hidden">
+        <!-- Top Logo Bar -->
+        <div class="relative z-20 w-full pt-8 pb-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <!-- Left Logo -->
+                <div class="flex items-center">
+                    <img src="image/Logo-hori.png" alt="DataMed Analytics Tutor Logo" class="h-12 lg:h-16 w-auto opacity-90 hover:opacity-100 transition-opacity duration-300">
+                </div>
+                
+                <!-- Right Logo -->
+                <div class="flex items-center">
+                    <img src="image/WMU_logo.png" alt="WMU Logo" class="h-12 lg:h-16 w-auto opacity-90 hover:opacity-100 transition-opacity duration-300">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hero Content -->
+        <div class="flex-1 flex items-center justify-center">
+        <!-- Advanced Gradient Background -->
+        <div class="absolute inset-0 overflow-hidden">
+            <!-- Primary Gradient Layer -->
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 via-purple-50 to-rose-50 dark:from-slate-950 dark:via-blue-950/80 dark:via-indigo-950/60 dark:to-purple-950/40"></div>
+            
+            <!-- Secondary Radial Gradients -->
+            <div class="absolute top-0 left-0 w-full h-full">
+                <div class="absolute top-[-20%] left-[-10%] w-96 h-96 lg:w-[600px] lg:h-[600px] bg-gradient-radial from-blue-400/20 via-indigo-400/10 to-transparent rounded-full blur-3xl animate-pulse-slow"></div>
+                <div class="absolute bottom-[-20%] right-[-10%] w-80 h-80 lg:w-[500px] lg:h-[500px] bg-gradient-radial from-purple-400/20 via-pink-400/10 to-transparent rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 lg:w-[400px] lg:h-[400px] bg-gradient-radial from-indigo-300/15 via-blue-300/8 to-transparent rounded-full blur-2xl animate-pulse-slow" style="animation-delay: 4s;"></div>
+            </div>
+            
+            <!-- Floating Orbs -->
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute top-1/4 left-1/5 w-4 h-4 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full opacity-60 animate-pulse"></div>
+                <div class="absolute top-3/4 right-1/4 w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-50 animate-pulse" style="animation-delay: 1s;"></div>
+                <div class="absolute bottom-1/3 left-1/3 w-2 h-2 bg-gradient-to-r from-indigo-400 to-blue-500 rounded-full opacity-40 animate-pulse" style="animation-delay: 3s;"></div>
+                <div class="absolute top-1/2 right-1/5 w-3 h-3 bg-gradient-to-r from-blue-300 to-purple-400 rounded-full opacity-45 animate-pulse" style="animation-delay: 2s;"></div>
+            </div>
+            
+            <!-- Mesh Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-white/50 via-transparent to-white/30 dark:from-slate-900/50 dark:via-transparent dark:to-slate-900/30"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto w-full relative z-10">
+            <div class="grid lg:grid-cols-5 gap-16 items-center">
+                <!-- Left Content -->
+                <div class="lg:col-span-3 space-y-12 animate-fade-in">
+                    <div class="space-y-8">
+                        <div class="inline-flex items-center px-4 py-2 bg-r-blue-50 dark:bg-r-blue-900/20 border border-r-blue-200 dark:border-r-blue-800 rounded-full text-r-blue-700 dark:text-r-blue-400 text-sm font-medium">
+                            <span class="w-2 h-2 bg-r-blue-500 rounded-full mr-2 animate-pulse-slow"></span>
+                            专为心理学研究者设计的R语言AI助手
+                        </div>
+                        
+                        <h1 class="text-4xl lg:text-6xl font-serif font-bold leading-[0.9] tracking-tight hero-title-float mb-4">
+                            <span class="hero-word-1 text-gradient">DataMed Analytics Tutor</span>
+                        </h1>
+                        <h2 class="text-5xl lg:text-7xl font-serif font-bold leading-[0.9] tracking-tight">
+                            <span class="hero-word-2">让</span><span class="text-gradient hero-word-3">R语言</span><br>
+                            <span class="hero-word-4">为心理学插上翅膀</span>
+                        </h2>
+                        
+                        <p class="text-xl lg:text-2xl text-warm-gray-600 dark:text-warm-gray-300 font-light leading-relaxed max-w-2xl">
+                            用自然语言描述你的研究问题，获得优雅的R代码解决方案。
+                            <span class="text-r-blue-600 dark:text-r-blue-400 font-medium">让数据分析回归纯粹</span>
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 bg-warm-gray-100 dark:bg-warm-gray-800 text-warm-gray-700 dark:text-warm-gray-300 rounded-lg text-sm font-mono">
+                            tidyverse
+                        </span>
+                        <span class="px-4 py-2 bg-warm-gray-100 dark:bg-warm-gray-800 text-warm-gray-700 dark:text-warm-gray-300 rounded-lg text-sm font-mono">
+                            ggplot2
+                        </span>
+                        <span class="px-4 py-2 bg-warm-gray-100 dark:bg-warm-gray-800 text-warm-gray-700 dark:text-warm-gray-300 rounded-lg text-sm font-mono">
+                            psych
+                        </span>
+                        <span class="px-4 py-2 bg-warm-gray-100 dark:bg-warm-gray-800 text-warm-gray-700 dark:text-warm-gray-300 rounded-lg text-sm font-mono">
+                            lavaan
+                        </span>
+                    </div>
+                    
+                    <div class="pt-8">
+                        <a href="https://data.dryan.vip/" class="group inline-block px-8 py-4 premium-button text-white rounded-xl font-semibold text-lg elegant-shadow hover-lift relative overflow-hidden">
+                            <span class="relative z-10">开始创造</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Right Visual -->
+                <div class="lg:col-span-2 relative">
+                    <div class="relative">
+                        <!-- Main Code Window -->
+                        <div class="code-window relative p-6 pt-10 elegant-shadow-lg">
+                            <div class="font-mono text-sm leading-relaxed">
+                                <div class="text-gray-500 dark:text-gray-400 mb-3"># AI生成的R代码</div>
+                                <div class="text-blue-400">library</div><div class="text-gray-300">(</div><div class="text-green-400">psych</div><div class="text-gray-300">)</div><br><br>
+                                
+                                <div class="text-gray-500 dark:text-gray-400"># 导入数据</div>
+                                <div class="text-orange-400">data</div> <div class="text-gray-300">&lt;-</div> <div class="text-blue-400">read_csv</div><div class="text-gray-300">(</div><div class="text-green-400">"data.csv"</div><div class="text-gray-300">)</div><br><br>
+                                
+                                <div class="text-gray-500 dark:text-gray-400"># 相关分析</div>
+                                <div class="text-blue-400">cor.test</div><div class="text-gray-300">(</div><div class="text-orange-400">data</div><div class="text-gray-300">$</div><div class="text-purple-400">anxiety</div><div class="text-gray-300">,</div><br>
+                                <div class="ml-8"><div class="text-orange-400">data</div><div class="text-gray-300">$</div><div class="text-purple-400">performance</div><div class="text-gray-300">)</div></div>
+                            </div>
+                            
+                            <!-- Floating Stats -->
+                            <div class="absolute -top-4 -right-4 glass-morphism px-4 py-2 rounded-lg text-sm">
+                                <span class="text-green-500 font-semibold">✓</span> 
+                                <span class="text-warm-gray-600 dark:text-warm-gray-400">APA规范</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Floating Elements -->
+                        <div class="absolute -bottom-6 -left-6 glass-morphism px-6 py-4 rounded-xl elegant-shadow">
+                            <div class="text-sm text-warm-gray-600 dark:text-warm-gray-400 mb-1">效应量</div>
+                            <div class="text-2xl font-bold text-r-blue-600">0.74</div>
+                            <div class="text-xs text-warm-gray-500">Cohen's d</div>
+                        </div>
+                        
+                        <div class="absolute -top-8 -left-8 glass-morphism p-4 rounded-full elegant-shadow">
+                            <div class="w-8 h-8 r-gradient rounded-full flex items-center justify-center">
+                                <span class="text-white font-bold text-sm">R</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Workflow Section -->
+    <section class="py-32 px-6 lg:px-8 relative overflow-hidden">
+        <!-- Section Background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-50/50 via-blue-50/30 to-indigo-50/40 dark:from-slate-950/50 dark:via-blue-950/30 dark:to-indigo-950/40"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-24">
+                <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-200/50 dark:border-blue-800/50 rounded-full text-blue-700 dark:text-blue-400 text-sm font-medium mb-8 shadow-sm">
+                    <span class="w-2 h-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full mr-2 animate-pulse"></span>
+                    科学研究工作流
+                </div>
+                <h2 class="text-5xl lg:text-7xl font-serif font-bold mb-10 bg-gradient-to-r from-slate-800 via-blue-700 to-indigo-700 bg-clip-text text-transparent leading-tight pt-3">
+                    从想法到洞察
+                </h2>
+                <p class="text-xl lg:text-2xl text-warm-gray-600 dark:text-warm-gray-300 max-w-4xl mx-auto leading-relaxed">
+                    AI驱动的智能化研究流程，让复杂的统计分析变得简单直观
+                    <br><span class="text-lg text-blue-600 dark:text-blue-400 font-medium">专注于研究本身，而非技术细节</span>
+                </p>
+            </div>
+            
+            <div class="relative">
+                <!-- Enhanced Connection System -->
+                <div class="hidden lg:block absolute top-24 left-1/2 transform -translate-x-1/2 w-5/6">
+                    <!-- Main Connection Line -->
+                    <div class="h-1 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent rounded-full"></div>
+                    <div class="absolute inset-0 h-1 bg-gradient-to-r from-blue-300/40 via-indigo-400/80 to-purple-300/40 rounded-full blur-sm"></div>
+                    
+                    <!-- Flow Particles -->
+                    <div class="absolute top-1/2 left-0 w-2 h-2 bg-blue-400 rounded-full transform -translate-y-1/2 opacity-60">
+                        <div class="workflow-particle absolute inset-0 bg-blue-400 rounded-full"></div>
+                    </div>
+                    <div class="absolute top-1/2 left-1/3 w-2 h-2 bg-indigo-400 rounded-full transform -translate-y-1/2 opacity-60">
+                        <div class="workflow-particle absolute inset-0 bg-indigo-400 rounded-full" style="animation-delay: 1s;"></div>
+                    </div>
+                    <div class="absolute top-1/2 left-2/3 w-2 h-2 bg-purple-400 rounded-full transform -translate-y-1/2 opacity-60">
+                        <div class="workflow-particle absolute inset-0 bg-purple-400 rounded-full" style="animation-delay: 2s;"></div>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Workflow Steps -->
+                <div class="grid lg:grid-cols-4 gap-6">
+                    <!-- Step 1: Natural Input -->
+                    <div class="group workflow-step-container">
+                        <div class="workflow-step bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 dark:from-blue-950/60 dark:via-sky-950/60 dark:to-cyan-950/60 rounded-2xl p-6 text-center relative overflow-hidden border border-blue-100/60 dark:border-blue-900/60 h-96 flex flex-col">
+                            <!-- Background Decoration -->
+                            <div class="absolute inset-0 opacity-5">
+                                <div class="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full blur-xl"></div>
+                            </div>
+                            
+                            <div class="relative z-10">
+                                <!-- Step Number -->
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 via-sky-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <span class="text-2xl font-bold text-white">1</span>
+                                </div>
+                                
+                                <h3 class="text-xl font-serif font-bold mb-3 bg-gradient-to-r from-blue-700 via-sky-700 to-cyan-700 bg-clip-text text-transparent">自然语言输入</h3>
+                                
+                                <p class="text-warm-gray-600 dark:text-warm-gray-300 text-sm leading-relaxed mb-4">
+                                    用日常语言描述研究问题，AI智能识别研究意图和统计需求
+                                </p>
+                                
+                                <!-- Simplified Demo -->
+                                <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm p-4 rounded-xl border border-blue-200/50 dark:border-blue-800/50 mb-4">
+                                    <div class="text-xs font-mono bg-blue-50 dark:bg-blue-950/50 p-2 rounded text-blue-700 dark:text-blue-300 mb-2">
+                                        "使用机器学习预测学生心理健康风险"
+                                    </div>
+                                    <div class="text-xs text-green-600">✓ 识别：监督学习/分类预测</div>
+                                </div>
+                                
+                                <!-- Stats -->
+                                <div class="text-center">
+                                    <div class="text-sm text-blue-600 font-semibold">中英文支持</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: AI Analysis -->
+                    <div class="group workflow-step-container">
+                        <div class="workflow-step bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 dark:from-emerald-950/60 dark:via-teal-950/60 dark:to-green-950/60 rounded-2xl p-6 text-center relative overflow-hidden border border-emerald-100/60 dark:border-emerald-900/60 h-96 flex flex-col">
+                            <!-- Background Decoration -->
+                            <div class="absolute inset-0 opacity-5">
+                                <div class="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full blur-xl"></div>
+                            </div>
+                            
+                            <div class="relative z-10">
+                                <!-- Step Number -->
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-emerald-500 via-teal-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <span class="text-2xl font-bold text-white">2</span>
+                                </div>
+                                
+                                <h3 class="text-xl font-serif font-bold mb-3 bg-gradient-to-r from-emerald-700 via-teal-700 to-green-700 bg-clip-text text-transparent">智能方法推荐</h3>
+                                
+                                <p class="text-warm-gray-600 dark:text-warm-gray-300 text-sm leading-relaxed mb-4">
+                                    基于500+心理学研究模式训练，自动识别最优统计方法
+                                </p>
+                                
+                                <!-- Simplified Demo -->
+                                <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm p-4 rounded-xl border border-emerald-200/50 dark:border-emerald-800/50 mb-4">
+                                    <div class="text-xs text-emerald-600 mb-2">✓ 推荐方法：随机森林</div>
+                                    <div class="text-xs text-emerald-700 font-mono">randomForest • caret • e1071</div>
+                                    <div class="text-xs text-emerald-600 mt-2">置信度: 94.6%</div>
+                                </div>
+                                
+                                <!-- Stats -->
+                                <div class="text-center">
+                                    <div class="text-sm text-emerald-600 font-semibold">98.3% 准确率</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Code Generation -->
+                    <div class="group workflow-step-container">
+                        <div class="workflow-step bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 dark:from-violet-950/60 dark:via-purple-950/60 dark:to-fuchsia-950/60 rounded-2xl p-6 text-center relative overflow-hidden border border-violet-100/60 dark:border-violet-900/60 h-96 flex flex-col">
+                            <!-- Background Decoration -->
+                            <div class="absolute inset-0 opacity-5">
+                                <div class="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-violet-400 to-fuchsia-500 rounded-full blur-xl"></div>
+                            </div>
+                            
+                            <div class="relative z-10">
+                                <!-- Step Number -->
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <span class="text-2xl font-bold text-white">3</span>
+                                </div>
+                                
+                                <h3 class="text-xl font-serif font-bold mb-3 bg-gradient-to-r from-violet-700 via-purple-700 to-fuchsia-700 bg-clip-text text-transparent">智能代码生成</h3>
+                                
+                                <p class="text-warm-gray-600 dark:text-warm-gray-300 text-sm leading-relaxed mb-4">
+                                    生成符合最佳实践的R代码，包含完整的分析流程和APA格式输出
+                                </p>
+                                
+                                <!-- Simplified Demo -->
+                                <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm p-4 rounded-xl border border-violet-200/50 dark:border-violet-800/50 mb-4">
+                                    <div class="bg-gray-800 p-3 rounded text-xs font-mono">
+                                        <div class="text-green-400"># 机器学习代码</div>
+                                        <div><span class="text-blue-400">model</span> <span class="text-gray-300">&lt;-</span> <span class="text-purple-400">randomForest</span><span class="text-gray-300">(risk ~ .)</span></div>
+                                        <div><span class="text-orange-400">predict</span><span class="text-gray-300">(model, newdata)</span></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Stats -->
+                                <div class="text-center">
+                                    <div class="text-sm text-violet-600 font-semibold">APA标准输出</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Insights -->
+                    <div class="group workflow-step-container">
+                        <div class="workflow-step bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/60 dark:via-orange-950/60 dark:to-red-950/60 rounded-2xl p-6 text-center relative overflow-hidden border border-amber-100/60 dark:border-amber-900/60 h-96 flex flex-col">
+                            <!-- Background Decoration -->
+                            <div class="absolute inset-0 opacity-5">
+                                <div class="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-amber-400 to-red-500 rounded-full blur-xl"></div>
+                            </div>
+                            
+                            <div class="relative z-10">
+                                <!-- Step Number -->
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-amber-500 via-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <span class="text-2xl font-bold text-white">4</span>
+                                </div>
+                                
+                                <h3 class="text-xl font-serif font-bold mb-3 bg-gradient-to-r from-amber-700 via-orange-700 to-red-700 bg-clip-text text-transparent">即时研究洞察</h3>
+                                
+                                <p class="text-warm-gray-600 dark:text-warm-gray-300 text-sm leading-relaxed mb-4">
+                                    一键获得专业的统计报告，包含APA格式结果、效应量解释和可视化图表
+                                </p>
+                                
+                                <!-- Simplified Demo -->
+                                <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm p-4 rounded-xl border border-amber-200/50 dark:border-amber-800/50 mb-4">
+                                    <div class="text-xs font-mono bg-amber-50 dark:bg-amber-950/50 p-2 rounded text-amber-700 dark:text-amber-300 mb-2">
+                                        准确率：89.3% | AUC：0.92
+                                    </div>
+                                    <div class="text-xs text-amber-600">🤖 自动生成预测模型报告</div>
+                                </div>
+                                
+                                <!-- Stats -->
+                                <div class="text-center">
+                                    <div class="text-sm text-amber-600 font-semibold">APA标准输出</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Process Time Indicator -->
+                <div class="mt-16 text-center">
+                    <div class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 border border-blue-200/50 dark:border-blue-800/50 rounded-full">
+                        <svg class="w-5 h-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"/>
+                        </svg>
+                        <span class="text-blue-700 dark:text-blue-300 font-medium text-sm">
+                            平均处理时间: <span class="font-bold">30秒</span> | 从输入到完整报告
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Capabilities -->
+    <section class="py-32 px-6 lg:px-8 bg-warm-gray-50 dark:bg-slate-950 relative overflow-hidden">
+        <!-- Background Network -->
+        <div class="absolute inset-0 opacity-5 pointer-events-none">
+            <svg class="absolute top-0 left-0 w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+                <!-- R Package Network -->
+                <g class="package-network">
+                    <!-- Central Hub -->
+                    <circle cx="600" cy="400" r="8" fill="#3A7DD4" class="hub-node">
+                        <animate attributeName="r" values="8;12;8" dur="4s" repeatCount="indefinite"/>
+                    </circle>
+                    
+                    <!-- Package Nodes -->
+                    <circle cx="500" cy="200" r="6" fill="#10B981" opacity="0.8"/>
+                    <circle cx="700" cy="180" r="6" fill="#8B5CF6" opacity="0.8"/>
+                    <circle cx="800" cy="300" r="6" fill="#F59E0B" opacity="0.8"/>
+                    <circle cx="750" cy="500" r="6" fill="#EF4444" opacity="0.8"/>
+                    <circle cx="450" cy="600" r="6" fill="#06B6D4" opacity="0.8"/>
+                    <circle cx="300" cy="450" r="6" fill="#EC4899" opacity="0.8"/>
+                    <circle cx="400" cy="300" r="6" fill="#84CC16" opacity="0.8"/>
+                    
+                    <!-- Connections -->
+                    <g stroke="#3A7DD4" stroke-width="1" fill="none" opacity="0.3">
+                        <line x1="600" y1="400" x2="500" y2="200"/>
+                        <line x1="600" y1="400" x2="700" y2="180"/>
+                        <line x1="600" y1="400" x2="800" y2="300"/>
+                        <line x1="600" y1="400" x2="750" y2="500"/>
+                        <line x1="600" y1="400" x2="450" y2="600"/>
+                        <line x1="600" y1="400" x2="300" y2="450"/>
+                        <line x1="600" y1="400" x2="400" y2="300"/>
+                    </g>
+                </g>
+            </svg>
+        </div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-24">
+                <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 dark:from-blue-900/30 dark:via-indigo-900/30 dark:to-purple-900/30 border border-blue-200/50 dark:border-blue-800/50 rounded-full text-blue-700 dark:text-blue-400 text-sm font-medium mb-8 shadow-sm">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
+                    </svg>
+                    深度技术架构
+                </div>
+                <h2 class="text-5xl lg:text-7xl font-serif font-bold mb-10 bg-gradient-to-r from-slate-800 via-blue-700 to-purple-700 bg-clip-text text-transparent leading-tight pt-3">
+                    R语言核心能力
+                </h2>
+                <p class="text-xl lg:text-2xl text-warm-gray-600 dark:text-warm-gray-300 max-w-4xl mx-auto leading-relaxed">
+                    精选最实用的R包工具，为心理学研究量身定制
+                    <br><span class="text-lg text-purple-600 dark:text-purple-400 font-medium">让复杂的统计分析变得简单易用</span>
+                </p>
+            </div>
+            
+            <!-- Revolutionary Asymmetric Layout -->
+            <div class="relative">
+                <!-- Connection Networks -->
+                <div class="absolute inset-0 pointer-events-none opacity-10">
+                    <svg class="w-full h-full" viewBox="0 0 1200 800">
+                        <!-- Dynamic connection lines -->
+                        <path d="M200,200 Q600,100 1000,300" stroke="url(#gradient1)" stroke-width="2" fill="none" opacity="0.6">
+                            <animate attributeName="stroke-dasharray" values="0,1000;1000,0;0,1000" dur="8s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M300,600 Q600,400 900,200" stroke="url(#gradient2)" stroke-width="2" fill="none" opacity="0.4">
+                            <animate attributeName="stroke-dasharray" values="0,800;800,0;0,800" dur="10s" repeatCount="indefinite"/>
+                        </path>
+                        
+                        <!-- Gradient definitions -->
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0"/>
+                                <stop offset="50%" style="stop-color:#8B5CF6;stop-opacity:1"/>
+                                <stop offset="100%" style="stop-color:#EC4899;stop-opacity:0"/>
+                            </linearGradient>
+                            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#10B981;stop-opacity:0"/>
+                                <stop offset="50%" style="stop-color:#06B6D4;stop-opacity:1"/>
+                                <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:0"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+                <!-- Main Grid Container - Three Equal Cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Card 1: R Package Ecosystem -->
+                    <div class="group">
+                        <div class="bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 dark:from-blue-950/40 dark:via-indigo-950/40 dark:to-purple-950/40 backdrop-blur-xl rounded-3xl p-8 h-full relative overflow-hidden border border-blue-200/50 dark:border-blue-800/30 shadow-2xl shadow-blue-500/10 transition-all duration-700 hover:shadow-3xl hover:shadow-blue-500/20 hover:scale-[1.02]">
+                            
+                            <!-- Animated Background Elements -->
+                            <div class="absolute inset-0 opacity-5">
+                                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-conic from-blue-400 via-purple-500 to-pink-500 rounded-full blur-3xl animate-spin" style="animation-duration: 30s;"></div>
+                                <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-conic from-indigo-400 via-blue-500 to-cyan-500 rounded-full blur-2xl animate-pulse"></div>
+                            </div>
+                            
+                            <!-- Floating Geometric Shapes -->
+                            <div class="absolute top-16 right-16 w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full animate-bounce" style="animation-delay: 0s; animation-duration: 3s;"></div>
+                            <div class="absolute top-32 right-24 w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rotate-45 animate-bounce" style="animation-delay: 1s; animation-duration: 4s;"></div>
+                            <div class="absolute bottom-20 right-16 w-1 h-6 bg-gradient-to-b from-indigo-400 to-blue-500 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
+                            
+                            <div class="relative z-10 h-full flex flex-col">
+                                <!-- Header Section -->
+                                <div class="text-center mb-8">
+                                    <div class="relative inline-block mb-6">
+                                        <div class="w-20 h-20 bg-gradient-to-br from-blue-500 via-indigo-500 via-purple-500 to-pink-600 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-2xl shadow-blue-500/30 mx-auto transform hover:rotate-6 transition-all duration-500">
+                                            <div class="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent"></div>
+                                            <div class="absolute inset-2 bg-gradient-to-br from-white/10 to-transparent rounded-xl"></div>
+                                            <svg class="w-10 h-10 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+                                            </svg>
+                                            <!-- Corner accents -->
+                                            <div class="absolute top-1 left-1 w-2 h-2 bg-white/40 rounded-full animate-pulse"></div>
+                                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white/30 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                                        </div>
+                                        
+                                        <!-- Floating badge -->
+                                        <div class="absolute -top-1 -right-1 px-2 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold rounded-full shadow-lg animate-pulse">
+                                            CORE
+                                        </div>
+                                    </div>
+                                    
+                                    <h3 class="text-2xl font-serif font-bold mb-4 bg-gradient-to-r from-blue-600 via-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+                                        R包生态系统
+                                    </h3>
+                                    <p class="text-warm-gray-600 dark:text-warm-gray-300 text-sm leading-relaxed">
+                                        精选集成50+心理学核心包，AI智能管理，零冲突部署
+                                    </p>
+                                </div>
+                                
+                                <!-- Core Packages Showcase -->
+                                <div class="flex-1 space-y-4">
+                                    <div class="grid grid-cols-1 gap-3">
+                                        <!-- Package Card 1 -->
+                                        <div class="group/package relative">
+                                            <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-4 rounded-xl border border-blue-200/40 dark:border-blue-800/40 transition-all duration-300 hover:bg-white/90 hover:scale-105 hover:shadow-lg">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <div class="flex items-center space-x-2">
+                                                        <div class="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full animate-pulse"></div>
+                                                        <span class="font-mono font-bold text-blue-700 dark:text-blue-400 text-sm">tidyverse</span>
+                                                    </div>
+                                                    <div class="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-600 px-2 py-1 rounded-full">v2.0.0</div>
+                                                </div>
+                                                <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">数据科学生态系统</div>
+                                                <div class="text-xs text-gray-500 font-mono bg-gray-50 dark:bg-gray-800 p-1 rounded">dplyr • ggplot2 • tidyr</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Package Card 2 -->
+                                        <div class="group/package relative">
+                                            <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-4 rounded-xl border border-indigo-200/40 dark:border-indigo-800/40 transition-all duration-300 hover:bg-white/90 hover:scale-105 hover:shadow-lg">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <div class="flex items-center space-x-2">
+                                                        <div class="w-3 h-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+                                                        <span class="font-mono font-bold text-indigo-700 dark:text-indigo-400 text-sm">psych</span>
+                                                    </div>
+                                                    <div class="text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 px-2 py-1 rounded-full">v2.3.9</div>
+                                                </div>
+                                                <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">心理测量学核心</div>
+                                                <div class="text-xs text-gray-500 font-mono bg-gray-50 dark:bg-gray-800 p-1 rounded">alpha • describe • fa</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Package Card 3 -->
+                                        <div class="group/package relative">
+                                            <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-4 rounded-xl border border-purple-200/40 dark:border-purple-800/40 transition-all duration-300 hover:bg-white/90 hover:scale-105 hover:shadow-lg">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <div class="flex items-center space-x-2">
+                                                        <div class="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                                                        <span class="font-mono font-bold text-purple-700 dark:text-purple-400 text-sm">lavaan</span>
+                                                    </div>
+                                                    <div class="text-xs bg-purple-100 dark:bg-purple-900/50 text-purple-600 px-2 py-1 rounded-full">v0.6-15</div>
+                                                </div>
+                                                <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">结构方程建模</div>
+                                                <div class="text-xs text-gray-500 font-mono bg-gray-50 dark:bg-gray-800 p-1 rounded">sem • cfa • growth</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Performance Metrics -->
+                                    <div class="bg-gradient-to-r from-blue-50/80 via-indigo-50/80 to-purple-50/80 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20 backdrop-blur-sm p-4 rounded-xl border border-blue-200/50 dark:border-blue-800/30">
+                                        <div class="grid grid-cols-3 gap-4">
+                                            <div class="text-center">
+                                                <div class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-1">50+</div>
+                                                <div class="text-xs text-gray-600 dark:text-gray-400 font-medium">核心包</div>
+                                                <div class="text-xs text-gray-500 mt-1">自动集成</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-1">99.8%</div>
+                                                <div class="text-xs text-gray-600 dark:text-gray-400 font-medium">兼容性</div>
+                                                <div class="text-xs text-gray-500 mt-1">零冲突</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1">0.3s</div>
+                                                <div class="text-xs text-gray-600 dark:text-gray-400 font-medium">加载速度</div>
+                                                <div class="text-xs text-gray-500 mt-1">极速启动</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: AI Engine -->
+                    <div class="group">
+                        <div class="bg-gradient-to-br from-emerald-50/80 via-teal-50/80 to-cyan-50/80 dark:from-emerald-950/40 dark:via-teal-950/40 dark:to-cyan-950/40 backdrop-blur-xl rounded-3xl p-8 h-full relative overflow-hidden border border-emerald-200/50 dark:border-emerald-800/30 shadow-xl shadow-emerald-500/10 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/20 hover:scale-[1.02]">
+                            
+                            <!-- AI Brain Animation -->
+                            <div class="absolute top-4 right-4 w-24 h-24 opacity-10">
+                                <div class="w-full h-full bg-gradient-conic from-emerald-400 via-teal-500 to-cyan-500 rounded-full animate-spin" style="animation-duration: 20s;"></div>
+                            </div>
+                            
+                            <div class="relative z-10 h-full flex flex-col">
+                                <!-- Header -->
+                                <div class="text-center mb-8">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-lg shadow-emerald-500/30 mx-auto mb-6 transform hover:rotate-12 transition-all duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent"></div>
+                                        <svg class="w-10 h-10 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12,2A2,2 0 0,1 14,4C14,5.5 13.5,6.5 13,7H11C10.5,6.5 10,5.5 10,4A2,2 0 0,1 12,2M21,9V7L15,1L9,7V9A3,3 0 0,0 6,12A3,3 0 0,0 9,15A3,3 0 0,0 12,12A3,3 0 0,0 15,15A3,3 0 0,0 18,12A3,3 0 0,0 21,9Z"/>
+                                        </svg>
+                                    </div>
+                                    
+                                    <h3 class="text-2xl font-serif font-bold mb-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">AI统计引擎</h3>
+                                    <p class="text-warm-gray-600 dark:text-warm-gray-300 text-sm leading-relaxed">
+                                        智能识别研究设计，自动推荐最优统计方法
+                                    </p>
+                                </div>
+                                
+                                <!-- Method Categories -->
+                                <div class="flex-1 space-y-3">
+                                    <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-4 rounded-xl border border-emerald-200/40 dark:border-emerald-800/40 transition-all duration-300 hover:bg-white/90">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-semibold text-emerald-700 dark:text-emerald-400 text-sm">描述统计</span>
+                                            <span class="text-xs bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 px-2 py-1 rounded-full">丰富</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500 font-mono">describe() • alpha() • ICC()</div>
+                                    </div>
+                                    
+                                    <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-4 rounded-xl border border-teal-200/40 dark:border-teal-800/40 transition-all duration-300 hover:bg-white/90">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-semibold text-teal-700 dark:text-teal-400 text-sm">推断统计</span>
+                                            <span class="text-xs bg-teal-100 dark:bg-teal-900/50 text-teal-600 px-2 py-1 rounded-full">全面</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500 font-mono">t.test() • aov() • lmer()</div>
+                                    </div>
+                                    
+                                    <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-4 rounded-xl border border-cyan-200/40 dark:border-cyan-800/40 transition-all duration-300 hover:bg-white/90">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-semibold text-cyan-700 dark:text-cyan-400 text-sm">高级建模</span>
+                                            <span class="text-xs bg-cyan-100 dark:bg-cyan-900/50 text-cyan-600 px-2 py-1 rounded-full">深度</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500 font-mono">sem() • mediate() • brm()</div>
+                                    </div>
+
+                                    <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-4 rounded-xl border border-blue-200/40 dark:border-blue-800/40 transition-all duration-300 hover:bg-white/90">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-semibold text-blue-700 dark:text-blue-400 text-sm">数据可视化</span>
+                                            <span class="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-600 px-2 py-1 rounded-full">精美</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500 font-mono">ggplot2 • plotly • lattice()</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- AI Accuracy Display -->
+                                <div class="mt-6 bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20 backdrop-blur-sm p-4 rounded-xl border border-emerald-300/50 dark:border-emerald-700/50">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-emerald-600 mb-1">97.3%</div>
+                                        <div class="text-sm text-emerald-700 dark:text-emerald-400 font-medium">AI推荐准确率</div>
+                                        <div class="text-xs text-gray-500 mt-1">基于10万+研究训练</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Research Domains -->
+                    <div class="group">
+                        <div class="bg-gradient-to-br from-rose-50/80 via-pink-50/80 to-fuchsia-50/80 dark:from-rose-950/40 dark:via-pink-950/40 dark:to-fuchsia-950/40 backdrop-blur-xl rounded-3xl p-8 h-full relative overflow-hidden border border-rose-200/50 dark:border-rose-800/30 shadow-xl shadow-rose-500/10 transition-all duration-500 hover:shadow-2xl hover:shadow-rose-500/20 hover:scale-[1.02]">
+                            
+                            <!-- Neural Network Background -->
+                            <div class="absolute inset-0 opacity-5">
+                                <div class="absolute top-4 left-4 w-2 h-2 bg-rose-400 rounded-full animate-ping"></div>
+                                <div class="absolute top-12 right-8 w-1 h-1 bg-pink-400 rounded-full animate-ping" style="animation-delay: 1s;"></div>
+                                <div class="absolute bottom-12 left-8 w-3 h-3 bg-fuchsia-400 rounded-full animate-ping" style="animation-delay: 2s;"></div>
+                                <div class="absolute bottom-4 right-4 w-1 h-1 bg-purple-400 rounded-full animate-ping" style="animation-delay: 3s;"></div>
+                            </div>
+                            
+                            <div class="relative z-10 h-full flex flex-col">
+                                <!-- Header -->
+                                <div class="text-center mb-8">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-rose-500 via-pink-500 to-fuchsia-600 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-lg shadow-rose-500/30 mx-auto mb-6 transform hover:-rotate-12 transition-all duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent"></div>
+                                        <svg class="w-10 h-10 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7.07,18.28C7.5,17.38 8.12,16.5 8.91,15.77C9.71,15.04 10.69,14.5 11.73,14.22C11.73,14.57 11.78,14.92 11.87,15.25C11.96,15.58 12.09,15.89 12.25,16.18C12.84,17.24 13.66,18.16 14.66,18.86C14.66,18.86 15.61,19.61 16.75,19.87C15.84,21.12 14.45,22 12.83,22C10.18,22 7.95,20.44 7.07,18.28M18.93,5.72C18.5,6.62 17.88,7.5 17.09,8.23C16.29,8.96 15.31,9.5 14.27,9.78C14.27,9.43 14.22,9.08 14.13,8.75C14.04,8.42 13.91,8.11 13.75,7.82C13.16,6.76 12.34,5.84 11.34,5.14C11.34,5.14 10.39,4.39 9.25,4.13C10.16,2.88 11.55,2 13.17,2C15.82,2 18.05,3.56 18.93,5.72Z"/>
+                                        </svg>
+                                    </div>
+                                    
+                                    <h3 class="text-2xl font-serif font-bold mb-4 bg-gradient-to-r from-rose-600 via-pink-600 to-fuchsia-600 bg-clip-text text-transparent">研究领域</h3>
+                                    <p class="text-warm-gray-600 dark:text-warm-gray-300 text-sm leading-relaxed">
+                                        全面覆盖心理学各分支领域
+                                    </p>
+                                </div>
+                                
+                                <!-- Domain Grid -->
+                                <div class="flex-1 grid grid-cols-2 gap-3 mb-6">
+                                    <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-3 rounded-xl border border-rose-200/40 dark:border-rose-800/40 text-center transition-all duration-300 hover:bg-white/90 hover:scale-105">
+                                        <div class="text-sm font-semibold text-rose-700 dark:text-rose-400 mb-1">社会心理学</div>
+                                        <div class="text-xs text-gray-500 leading-relaxed">
+                                            <div class="mb-1">态度 • 人格 • 价值观</div>
+                                            <div class="text-xs">社会认知 • 群体行为</div>
+                                            <div class="text-xs">偏见研究 • 跨文化</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-3 rounded-xl border border-pink-200/40 dark:border-pink-800/40 text-center transition-all duration-300 hover:bg-white/90 hover:scale-105">
+                                        <div class="text-sm font-semibold text-pink-700 dark:text-pink-400 mb-1">临床心理学</div>
+                                        <div class="text-xs text-gray-500 leading-relaxed">
+                                            <div class="mb-1">症状量表 • 诊断</div>
+                                            <div class="text-xs">认知行为治疗</div>
+                                            <div class="text-xs">心理干预 • 效果评估</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-3 rounded-xl border border-fuchsia-200/40 dark:border-fuchsia-800/40 text-center transition-all duration-300 hover:bg-white/90 hover:scale-105">
+                                        <div class="text-sm font-semibold text-fuchsia-700 dark:text-fuchsia-400 mb-1">教育心理学</div>
+                                        <div class="text-xs text-gray-500 leading-relaxed">
+                                            <div class="mb-1">学习 • 成就</div>
+                                            <div class="text-xs">学习动机 • 认知策略</div>
+                                            <div class="text-xs">教学效果 • 学习障碍</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm p-3 rounded-xl border border-purple-200/40 dark:border-purple-800/40 text-center transition-all duration-300 hover:bg-white/90 hover:scale-105">
+                                        <div class="text-sm font-semibold text-purple-700 dark:text-purple-400 mb-1">健康心理学</div>
+                                        <div class="text-xs text-gray-500 leading-relaxed">
+                                            <div class="mb-1">应激 • 应对</div>
+                                            <div class="text-xs">健康行为 • 疾病心理</div>
+                                            <div class="text-xs">健康促进 • 预防干预</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Coverage Stats -->
+                                <div class="bg-gradient-to-r from-rose-500/20 via-pink-500/20 to-fuchsia-500/20 backdrop-blur-sm p-4 rounded-xl border border-rose-300/50 dark:border-rose-700/50">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-rose-600 mb-1">12+</div>
+                                        <div class="text-sm text-rose-700 dark:text-rose-400 font-medium">心理学分支</div>
+                                        <div class="text-xs text-gray-500 mt-1">专业模板库</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            
+
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="py-32 px-6 lg:px-8 relative overflow-hidden">
+        <!-- Section Background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-50/30 via-indigo-50/20 to-purple-50/30 dark:from-slate-950/30 dark:via-indigo-950/20 dark:to-purple-950/30"></div>
+        
+        <!-- Floating Research Icons -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-5">
+            <div class="absolute top-20 left-10 w-16 h-16 research-float">
+                <svg class="w-full h-full text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+                </svg>
+            </div>
+            <div class="absolute top-40 right-20 w-12 h-12 research-float" style="animation-delay: 1s;">
+                <svg class="w-full h-full text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19,3H5C3.9,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.9 20.1,3 19,3M13.03,7.06L14.09,6L16.5,8.41L18.91,6L19.97,7.06L17.56,9.47L19.97,11.88L18.91,12.94L16.5,10.53L14.09,12.94L13.03,11.88L15.44,9.47L13.03,7.06M6.25,6H11.5V7.5H6.25V6M6.25,16.5V15H11.5V16.5H6.25M6.25,13V11.5H9.5V13H6.25Z"/>
+                </svg>
+            </div>
+            <div class="absolute bottom-32 left-1/4 w-14 h-14 research-float" style="animation-delay: 2s;">
+                <svg class="w-full h-full text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12,2A7,7 0 0,1 19,9C19,11.38 17.81,13.47 16,14.74V17A1,1 0 0,1 15,18H9A1,1 0 0,1 8,17V14.74C6.19,13.47 5,11.38 5,9A7,7 0 0,1 12,2M9,21V20H15V21A1,1 0 0,1 14,22H10A1,1 0 0,1 9,21M12,4A5,5 0 0,0 7,9C7,11.05 8.23,12.81 10,13.58V16H14V13.58C15.77,12.81 17,11.05 17,9A5,5 0 0,0 12,4Z"/>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-24">
+                <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 dark:from-blue-900/30 dark:via-indigo-900/30 dark:to-purple-900/30 border border-blue-200/50 dark:border-blue-800/50 rounded-full text-blue-700 dark:text-blue-400 text-sm font-medium mb-8 shadow-sm">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12,2C13.1,2 14,2.9 14,4C14,5.1 13.1,6 12,6C10.9,6 10,5.1 10,4C10,2.9 10.9,2 12,2M21,9V7L15,1L9,7V9A3,3 0 0,0 6,12A3,3 0 0,0 9,15A3,3 0 0,0 12,12A3,3 0 0,0 15,15A3,3 0 0,0 18,12A3,3 0 0,0 21,9Z"/>
+                    </svg>
+                    全球研究者见证
+                </div>
+                <h2 class="text-5xl lg:text-7xl font-serif font-bold mb-10 bg-gradient-to-r from-slate-800 via-blue-700 to-purple-700 bg-clip-text text-transparent leading-tight pt-3">
+                    改变研究的力量
+                </h2>
+                <p class="text-xl lg:text-2xl text-warm-gray-600 dark:text-warm-gray-300 max-w-4xl mx-auto leading-relaxed">
+                    探索AI如何重塑心理学研究范式，让复杂的统计分析变得简单直观
+                </p>
+            </div>
+            
+            <!-- Enhanced Testimonials Grid -->
+            <div class="grid lg:grid-cols-3 gap-8 lg:gap-12 mb-16">
+                <!-- Testimonial 1: Experimental Psychology -->
+                <div class="group testimonial-card-container">
+                    <div class="testimonial-card bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50 dark:from-blue-950/60 dark:via-indigo-950/60 dark:to-violet-950/60 rounded-3xl p-8 h-full relative overflow-hidden border border-blue-100/60 dark:border-blue-900/60">
+                        <!-- Background Pattern -->
+                        <div class="absolute inset-0 opacity-5">
+                            <div class="absolute top-4 right-4 w-28 h-28 bg-gradient-to-br from-blue-400 to-violet-500 rounded-full blur-2xl"></div>
+                            <div class="absolute bottom-4 left-4 w-20 h-20 bg-gradient-to-tr from-indigo-400 to-blue-500 rounded-full blur-xl"></div>
+                        </div>
+                        
+                        <div class="relative z-10">
+                            <!-- Header -->
+                            <div class="flex items-start space-x-4 mb-6">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 via-indigo-500 to-violet-600 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-lg shadow-blue-500/25">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent"></div>
+                                    <svg class="w-8 h-8 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+                                    </svg>
+
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h3 class="font-serif font-bold text-xl text-blue-700 dark:text-blue-400">心理网络分析突破</h3>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                            <!-- Quote -->
+                            <blockquote class="text-warm-gray-700 dark:text-warm-gray-300 leading-relaxed mb-6 text-lg font-medium">
+                                "心理网络分析原本是极其复杂的工作，涉及大量的网络推断算法和中心性计算。现在通过DataMed Analytics Tutor，我只需输入'构建焦虑症状网络并计算节点中心性'，系统就能自动生成包含qgraph、bootnet等包的完整分析流程。"
+                            </blockquote>
+                            
+                            <!-- Research Details -->
+                            <div class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm p-4 rounded-2xl border border-blue-200/30 dark:border-blue-800/30 mb-6">
+                                <div class="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-3">🌐 网络分析成果</div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-blue-600">45个</div>
+                                        <div class="text-xs text-gray-500">网络节点变量</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-indigo-600">0.89</div>
+                                        <div class="text-xs text-gray-500">网络稳定性指数</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-violet-600">N=3,246</div>
+                                        <div class="text-xs text-gray-500">网络样本量</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-purple-600">15种</div>
+                                        <div class="text-xs text-gray-500">网络算法模型</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2: Clinical Psychology -->
+                <div class="group testimonial-card-container">
+                    <div class="testimonial-card bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/60 dark:via-teal-950/60 dark:to-cyan-950/60 rounded-3xl p-8 h-full relative overflow-hidden border border-emerald-100/60 dark:border-emerald-900/60">
+                        <!-- Background Pattern -->
+                        <div class="absolute inset-0 opacity-5">
+                            <div class="absolute top-4 right-4 w-28 h-28 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-full blur-2xl"></div>
+                            <div class="absolute bottom-4 left-4 w-20 h-20 bg-gradient-to-tr from-teal-400 to-emerald-500 rounded-full blur-xl"></div>
+                        </div>
+                        
+                        <div class="relative z-10">
+                            <!-- Header -->
+                            <div class="flex items-start space-x-4 mb-6">
+                                <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-lg shadow-emerald-500/25">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent"></div>
+                                    <svg class="w-8 h-8 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,2A7,7 0 0,1 19,9C19,11.38 17.81,13.47 16,14.74V17A1,1 0 0,1 15,18H9A1,1 0 0,1 8,17V14.74C6.19,13.47 5,11.38 5,9A7,7 0 0,1 12,2M9,21V20H15V21A1,1 0 0,1 14,22H10A1,1 0 0,1 9,21M12,4A5,5 0 0,0 7,9C7,11.05 8.23,12.81 10,13.58V16H14V13.58C15.77,12.81 17,11.05 17,9A5,5 0 0,0 12,4Z"/>
+                                    </svg>
+                                    <!-- Clinical Cross -->
+
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h3 class="font-serif font-bold text-xl text-emerald-700 dark:text-emerald-400">潜剖面分析创新</h3>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                            <!-- Quote -->
+                            <blockquote class="text-warm-gray-700 dark:text-warm-gray-300 leading-relaxed mb-6 text-lg font-medium">
+                                "潜剖面分析曾经是让人头疼的复杂工作，涉及混合模型、信息准则比较等高级统计技术。现在只需告诉DataMed Analytics Tutor '探索抑郁症状的潜在类别'，它就能自动生成包含tidyLPA、poLCA等专业包的完整分析流程，甚至包括模型比较和类别解释。"
+                            </blockquote>
+                            
+                            <!-- Research Details -->
+                            <div class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm p-4 rounded-2xl border border-emerald-200/30 dark:border-emerald-800/30 mb-6">
+                                <div class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 mb-3">📊 潜剖面分析成果</div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-emerald-600">6类</div>
+                                        <div class="text-xs text-gray-500">最优潜在类别数</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-teal-600">0.94</div>
+                                        <div class="text-xs text-gray-500">分类质量指数</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-cyan-600">N=8,427</div>
+                                        <div class="text-xs text-gray-500">分析样本量</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-blue-600">8种</div>
+                                        <div class="text-xs text-gray-500">混合模型算法</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3: Educational Psychology -->
+                <div class="group testimonial-card-container">
+                    <div class="testimonial-card bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/60 dark:via-orange-950/60 dark:to-red-950/60 rounded-3xl p-8 h-full relative overflow-hidden border border-amber-100/60 dark:border-amber-900/60">
+                        <!-- Background Pattern -->
+                        <div class="absolute inset-0 opacity-5">
+                            <div class="absolute top-4 right-4 w-28 h-28 bg-gradient-to-br from-amber-400 to-red-500 rounded-full blur-2xl"></div>
+                            <div class="absolute bottom-4 left-4 w-20 h-20 bg-gradient-to-tr from-orange-400 to-amber-500 rounded-full blur-xl"></div>
+                        </div>
+                        
+                        <div class="relative z-10">
+                            <!-- Header -->
+                            <div class="flex items-start space-x-4 mb-6">
+                                <div class="w-16 h-16 bg-gradient-to-br from-amber-500 via-orange-500 to-red-600 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-lg shadow-amber-500/25">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent"></div>
+                                    <svg class="w-8 h-8 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/>
+                                    </svg>
+                                    <!-- Education Book Icon -->
+
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h3 class="font-serif font-bold text-xl text-amber-700 dark:text-amber-400">教育数据分析</h3>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                            <!-- Quote -->
+                            <blockquote class="text-warm-gray-700 dark:text-warm-gray-300 leading-relaxed mb-6 text-lg font-medium">
+                                "中介调节分析原本需要手写复杂的模型代码，Hayes的PROCESS在R中需要大量参数设置。现在我只需说'检验学习策略在家庭支持与学业成就关系中的中介调节作用'，DataMed Analytics Tutor就能生成包含lavaan、processR等包的完整分析流程，Bootstrap检验也自动完成。"
+                            </blockquote>
+                            
+                            <!-- Research Details -->
+                            <div class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm p-4 rounded-2xl border border-amber-200/30 dark:border-amber-800/30 mb-6">
+                                <div class="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-3">🔗 中介调节分析成果</div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-amber-600">0.43***</div>
+                                        <div class="text-xs text-gray-500">间接效应系数</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-orange-600">5000次</div>
+                                        <div class="text-xs text-gray-500">Bootstrap抽样</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-red-600">N=47,892</div>
+                                        <div class="text-xs text-gray-500">跨校样本量</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-pink-600">65%</div>
+                                        <div class="text-xs text-gray-500">中介效应占比</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Research Excellence Showcase -->
+            <div class="mt-16 p-8 bg-gradient-to-r from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950/30 dark:via-blue-950/30 dark:to-indigo-950/30 rounded-3xl border border-blue-200/50 dark:border-blue-800/50">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-serif font-bold mb-4 bg-gradient-to-r from-slate-700 via-blue-700 to-indigo-700 bg-clip-text text-transparent">研究卓越标准</h3>
+                    <p class="text-warm-gray-600 dark:text-warm-gray-300">专业品质与学术严谨的完美结合</p>
+                </div>
+                
+                <div class="grid md:grid-cols-4 gap-8 text-center">
+                    <div>
+                        <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
+                            </svg>
+                        </div>
+                        <div class="text-warm-gray-600 dark:text-warm-gray-400 font-medium">APA标准严格遵循</div>
+                        <div class="text-sm text-warm-gray-500 mt-1">符合国际学术规范</div>
+                    </div>
+                    <div>
+                        <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M11,6L12.5,7.5L17,3L19.5,5.5L12.5,12.5L6.5,6.5L9,4L11,6Z"/>
+                            </svg>
+                        </div>
+                        <div class="text-warm-gray-600 dark:text-warm-gray-400 font-medium">同行评议验证</div>
+                        <div class="text-sm text-warm-gray-500 mt-1">专家团队持续审核</div>
+                    </div>
+                    <div>
+                        <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12,2A7,7 0 0,1 19,9C19,11.38 17.81,13.47 16,14.74V17A1,1 0 0,1 15,18H9A1,1 0 0,1 8,17V14.74C6.19,13.47 5,11.38 5,9A7,7 0 0,1 12,2M9,21V20H15V21A1,1 0 0,1 14,22H10A1,1 0 0,1 9,21M12,4A5,5 0 0,0 7,9C7,11.05 8.23,12.81 10,13.58V16H14V13.58C15.77,12.81 17,11.05 17,9A5,5 0 0,0 12,4Z"/>
+                            </svg>
+                        </div>
+                        <div class="text-warm-gray-600 dark:text-warm-gray-400 font-medium">创新方法支持</div>
+                        <div class="text-sm text-warm-gray-500 mt-1">前沿统计技术集成</div>
+                    </div>
+                    <div>
+                        <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+                            </svg>
+                        </div>
+                        <div class="text-warm-gray-600 dark:text-warm-gray-400 font-medium">全球学术认可</div>
+                        <div class="text-sm text-warm-gray-500 mt-1">国际期刊广泛采用</div>
+                    </div>
+                </div>
+                
+                <!-- Research Quality Indicators -->
+                <div class="mt-8 pt-6 border-t border-blue-200/50 dark:border-blue-800/50">
+                    <div class="text-center mb-6">
+                        <span class="text-sm text-warm-gray-500 font-medium">学术质量保证</span>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="text-center p-4 bg-white/60 dark:bg-gray-900/60 rounded-xl border border-blue-200/30 dark:border-blue-800/30">
+                            <h4 class="font-semibold text-blue-700 dark:text-blue-400 mb-2">可重复性验证</h4>
+                            <p class="text-sm text-warm-gray-600 dark:text-warm-gray-300">所有生成代码均经过多轮测试，确保结果可重复</p>
+                        </div>
+                        
+                        <div class="text-center p-4 bg-white/60 dark:bg-gray-900/60 rounded-xl border border-emerald-200/30 dark:border-emerald-800/30">
+                            <h4 class="font-semibold text-emerald-700 dark:text-emerald-400 mb-2">统计效度保障</h4>
+                            <p class="text-sm text-warm-gray-600 dark:text-warm-gray-300">严格遵循统计学原理，确保分析方法的科学性</p>
+                        </div>
+                        
+                        <div class="text-center p-4 bg-white/60 dark:bg-gray-900/60 rounded-xl border border-purple-200/30 dark:border-purple-800/30">
+                            <h4 class="font-semibold text-purple-700 dark:text-purple-400 mb-2">持续更新升级</h4>
+                            <p class="text-sm text-warm-gray-600 dark:text-warm-gray-300">紧跟学术前沿，定期更新分析方法和技术标准</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-40 px-6 lg:px-8 r-gradient-soft relative overflow-hidden">
+        <!-- Epic Background Elements -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-500/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-tr from-indigo-400/10 to-blue-500/5 rounded-full blur-3xl"></div>
+            
+            <!-- Floating Mathematical Symbols -->
+            <div class="absolute top-32 left-1/4 text-blue-300/20 text-8xl font-serif transform rotate-12 destiny-float">∑</div>
+            <div class="absolute bottom-40 right-1/3 text-purple-300/20 text-6xl font-serif transform -rotate-12 destiny-float" style="animation-delay: 1s;">β</div>
+            <div class="absolute top-1/2 left-1/6 text-indigo-300/20 text-7xl font-serif transform rotate-45 destiny-float" style="animation-delay: 2s;">∞</div>
+            <div class="absolute bottom-1/3 left-2/3 text-blue-300/20 text-5xl font-serif transform -rotate-45 destiny-float" style="animation-delay: 3s;">φ</div>
+        </div>
+        
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <div class="space-y-12 mb-20">
+                <!-- Epic Title with Destiny Feel -->
+                <div class="space-y-6">
+                    <div class="text-sm uppercase tracking-[0.3em] text-warm-gray-500 dark:text-warm-gray-400 font-medium mb-8">
+                        The Inevitable Future
+                    </div>
+                    <h2 class="text-6xl lg:text-8xl font-serif font-bold leading-[0.9] bg-gradient-to-r from-slate-800 via-blue-700 via-indigo-700 to-purple-700 bg-clip-text text-transparent pt-4">
+                        AI与R语言的
+                        <br>
+                        <span class="text-7xl lg:text-9xl">宿命交汇</span>
+                    </h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 mx-auto rounded-full mt-8"></div>
+                </div>
+                
+                <!-- Epic Description with Destiny Narrative -->
+                <div class="space-y-8 max-w-4xl mx-auto">
+                    <p class="text-2xl lg:text-3xl text-warm-gray-700 dark:text-warm-gray-200 leading-relaxed font-light">
+                        在心理学研究的历史长河中，每一次范式转变都伴随着工具的革命。
+                        <br><span class="text-blue-600 dark:text-blue-400 font-medium">从纸笔到计算机，从SPSS到R，再到今天</span>
+                    </p>
+                    
+                    <p class="text-xl lg:text-2xl text-warm-gray-600 dark:text-warm-gray-300 leading-relaxed">
+                        <span class="font-serif italic text-indigo-600 dark:text-indigo-400">"这不仅仅是一个工具的诞生，而是研究者与智能的第一次深度融合。"</span>
+                    </p>
+                    
+                    <div class="grid md:grid-cols-3 gap-8 mt-16 mb-12">
+                        <div class="space-y-3">
+                            <div class="text-5xl font-bold text-blue-600 counter" data-target="1993">1993</div>
+                            <div class="text-warm-gray-600 dark:text-warm-gray-400">R语言诞生</div>
+                            <div class="text-sm text-warm-gray-500">统计计算革命开始</div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="text-5xl font-bold text-indigo-600 counter" data-target="2024">2024</div>
+                            <div class="text-warm-gray-600 dark:text-warm-gray-400">AI融合时代</div>
+                            <div class="text-sm text-warm-gray-500">人工智能重塑研究</div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="text-5xl font-bold text-purple-600">∞</div>
+                            <div class="text-warm-gray-600 dark:text-warm-gray-400">无限可能</div>
+                            <div class="text-sm text-warm-gray-500">未来正在你手中</div>
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </div>
+            
+            <!-- Single Epic CTA Button -->
+            <div class="mb-20">
+                <div class="relative inline-block">
+                    <!-- Glowing Ring Effect -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-2xl blur-xl opacity-20 animate-pulse" style="animation-delay: 0.5s;"></div>
+                    
+                    <!-- Main Button -->
+                    <a href="https://data.dryan.vip/" class="relative group inline-block px-16 py-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-2xl font-bold text-2xl elegant-shadow-lg hover-lift overflow-hidden transition-all duration-500">
+                        <!-- Button Background Effects -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                        
+                        <!-- Button Content -->
+                        <span class="relative z-10 flex items-center space-x-3">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+                            </svg>
+                            <span>踏入未来，立即开始创造</span>
+                            <svg class="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"/>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+                
+
+            </div>
+            
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 px-6 lg:px-8 bg-warm-gray-50 dark:bg-slate-950 border-t border-warm-gray-200 dark:border-warm-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-16 mb-16">
+                <!-- Left Column: Brand and Institution Info -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 r-gradient rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">R</span>
+                        </div>
+                        <h3 class="text-2xl font-serif font-bold">DataMed Analytics Tutor</h3>
+                    </div>
+                    <p class="text-warm-gray-600 dark:text-warm-gray-300 mb-8 leading-relaxed text-lg">
+                        专为心理学研究者打造的R语言AI助手，让数据分析回归纯粹，让研究更加专注。
+                    </p>
+                    
+                    <!-- Institution Information -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-2xl p-6 border border-blue-200/50 dark:border-blue-800/50">
+                        <h4 class="font-serif font-semibold text-lg mb-4 text-blue-700 dark:text-blue-400">研发机构</h4>
+                        <div class="space-y-3 text-sm text-warm-gray-600 dark:text-warm-gray-300">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div>
+                                    <div class="font-medium text-warm-gray-700 dark:text-warm-gray-200">温州医科大学精神医学学院</div>
+                                    <div class="text-xs text-warm-gray-500 mt-1">心理健康和智能计算研究院</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div>
+                                    <div class="font-medium text-warm-gray-700 dark:text-warm-gray-200">专业背景</div>
+                                    <div class="text-xs text-warm-gray-500 mt-1">致力于心理健康领域的人工智能技术创新与应用</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Designer Information -->
+                    <div class="mt-6">
+                        <p class="text-gray-700 dark:text-gray-200">
+                            <span class="font-medium">UI designer：</span><span class="font-semibold text-gray-900 dark:text-white">徐若飞</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Core Features -->
+                <div>
+                    <h4 class="font-serif font-semibold text-2xl mb-8 text-warm-gray-800 dark:text-warm-gray-200">核心功能</h4>
+                    
+                    <div class="grid gap-4">
+                        <div class="flex items-center space-x-4 p-4 bg-white dark:bg-gray-900/50 rounded-xl border border-warm-gray-200/50 dark:border-warm-gray-700/50 hover:shadow-lg transition-all duration-300">
+                            <div class="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex-shrink-0"></div>
+                            <div>
+                                <div class="font-medium text-warm-gray-800 dark:text-warm-gray-200">R代码智能生成</div>
+                                <div class="text-sm text-warm-gray-500">基于自然语言自动生成优雅的R代码</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4 p-4 bg-white dark:bg-gray-900/50 rounded-xl border border-warm-gray-200/50 dark:border-warm-gray-700/50 hover:shadow-lg transition-all duration-300">
+                            <div class="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex-shrink-0"></div>
+                            <div>
+                                <div class="font-medium text-warm-gray-800 dark:text-warm-gray-200">心理统计方法推荐</div>
+                                <div class="text-sm text-warm-gray-500">智能识别研究设计并推荐合适的统计方法</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4 p-4 bg-white dark:bg-gray-900/50 rounded-xl border border-warm-gray-200/50 dark:border-warm-gray-700/50 hover:shadow-lg transition-all duration-300">
+                            <div class="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex-shrink-0"></div>
+                            <div>
+                                <div class="font-medium text-warm-gray-800 dark:text-warm-gray-200">专业数据可视化</div>
+                                <div class="text-sm text-warm-gray-500">自动生成符合学术标准的统计图表</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4 p-4 bg-white dark:bg-gray-900/50 rounded-xl border border-warm-gray-200/50 dark:border-warm-gray-700/50 hover:shadow-lg transition-all duration-300">
+                            <div class="w-3 h-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex-shrink-0"></div>
+                            <div>
+                                <div class="font-medium text-warm-gray-800 dark:text-warm-gray-200">效应量与信度分析</div>
+                                <div class="text-sm text-warm-gray-500">提供完整的统计检验力和测量信度评估</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Section -->
+            <div class="border-t border-warm-gray-200 dark:border-warm-gray-800 pt-8">
+                <div class="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+                    <div class="text-sm text-warm-gray-500">
+                        © 2024 温州医科大学精神医学学院. 保留所有权利. 
+                        <span class="font-mono font-medium">v1.0.0</span>
+                    </div>
+                    <div class="flex items-center space-x-6 text-sm text-warm-gray-500">
+                        <a href="#" class="hover:text-blue-600 transition-colors duration-200">使用协议</a>
+                        <a href="#" class="hover:text-blue-600 transition-colors duration-200">隐私政策</a>
+                        <a href="#" class="hover:text-blue-600 transition-colors duration-200">学术引用</a>
+                        <a href="#" class="hover:text-blue-600 transition-colors duration-200">技术支持</a>
+                    </div>
+                </div>
+                
+                <!-- Institution Footer -->
+                <div class="mt-8 pt-6 border-t border-warm-gray-200 dark:border-warm-gray-800">
+                    <div class="text-center space-y-2">
+                        <div class="text-sm text-warm-gray-600 dark:text-warm-gray-300 font-medium">
+                            温州医科大学精神医学学院 · 心理健康和智能计算研究院
+                        </div>
+                        <div class="text-xs text-warm-gray-500">
+                            推动心理学研究的数字化转型与智能化发展
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode detection and handling
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Parallax effect for math formulas
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const formulas = document.querySelectorAll('.parallax-formula');
+            formulas.forEach((formula, index) => {
+                const speed = 0.5 + (index * 0.1);
+                formula.style.transform = `translateY(${scrollY * speed}px)`;
+            });
+        });
+
+        // Counter animation
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 20);
+        }
+
+        // Intersection Observer for counter animation
+        const observerOptions = {
+            threshold: 0.7,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseInt(counter.dataset.target);
+                    animateCounter(counter, target);
+                    counterObserver.unobserve(counter);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.counter').forEach(counter => {
+            counterObserver.observe(counter);
+        });
+
+        // Smooth hover effects for value cards
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('transform', 'scale-105');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('transform', 'scale-105');
+            });
+        });
+
+        // Add loading state simulation for demo
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (button.textContent.includes('开始使用') || button.textContent.includes('免费开始使用')) {
+                    e.preventDefault();
+                    const originalText = button.textContent;
+                    button.textContent = '启动中...';
+                    button.disabled = true;
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
